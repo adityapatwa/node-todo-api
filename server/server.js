@@ -22,8 +22,8 @@ app.post('/todos', (req, res) => {
 
     todo.save().then((todo) => {
         res.send({todo});
-    }, (err) => {
-        res.status(400).send(err);
+    }, (error) => {
+        res.status(400).send(error);
     });
 });
 
@@ -33,8 +33,8 @@ app.get('/todos', (req, res) => {
         res.send({
             todos,
         })
-    }, (err) => {
-        res.status(400).send(err);
+    }, (error) => {
+        res.status(400).send(error);
     });
 });
 
@@ -51,8 +51,8 @@ app.get('/todos/:id', (req, res) => {
         }
 
         res.send({todo});
-    }).catch((err) => {
-        res.status(400).send(err);
+    }).catch((error) => {
+        res.status(400).send(error);
     });
 });
 
@@ -69,8 +69,8 @@ app.delete('/todos/:id', (req, res) => {
         }
 
         res.send({todo});
-    }).catch((err) => {
-        res.status(400).send(err);
+    }).catch((error) => {
+        res.status(400).send(error);
     });
 });
 
@@ -96,10 +96,23 @@ app.patch('/todos/:id', (req, res) => {
         }
         res.send({todo});
     }).catch((error) => {
-        res.status(404).send();
+        res.status(404).send(error);
     });
 });
 
+// Create a new user
+app.post('/users', (req, res) => {
+    let body = _.pick(req.body, ['email', 'password']);
+    let user = new User(body);
+
+    user.save().then(() => {
+        return user.generateAuthToken();
+    }).then((token) => {
+        res.header({'x-auth': token}).send(user);
+    }).catch((error) => {
+        res.status(400).send(error);
+    });
+});
 app.listen(port, () => {
     console.log(`Started on port ${port}`);
 });
