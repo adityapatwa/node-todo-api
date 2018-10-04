@@ -30,7 +30,7 @@ describe('POST /todos', () => {
           .expect((res) => {
               expect(res.body.text).toBe(text);
           })
-          .end((err, res) => {
+          .end((err) => {
               if (err) {
                   return done(err);
               }
@@ -42,7 +42,7 @@ describe('POST /todos', () => {
           });
    });
 
-    it('should not create a new todo with invalid data', (done) => {
+   it('should not create a new todo with invalid data', (done) => {
         request(app)
             .post('/todos')
             .send({})
@@ -99,4 +99,42 @@ describe('GET /todos/:id', () => {
             .end(done);
     });
 
+});
+
+describe('DELETE /todos/:id', () => {
+   it('should remove a todo', (done) => {
+        //Converting to Hex String is required to provide a valid Id to the findById() method
+        let id = todos[1]._id.toHexString();
+        request(app)
+            .delete(`/todos/${id}`)
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.todo._id).toBe(id);
+            })
+            .end((err) => {
+                if (err) {
+                   return done(err);
+                }
+
+                Todo.findById(id).then((todo) => {
+                    expect(todo).toNotExist();
+                    done();
+                }).catch((e) => done(e));
+            });
+   });
+
+    it('should return 404 if todo is not found', (done) => {
+        let id = new ObjectID();
+        request(app)
+            .delete(`/todos/${id}`)
+            .expect(404)
+            .end(done);
+    });
+
+    it('should return 404 if ObjectID is invalid', (done) => {
+        request(app)
+            .delete(`/todos/1`)
+            .expect(404)
+            .end(done);
+    });
 });
