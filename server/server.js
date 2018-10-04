@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParse = require('body-parser');
+const _ = require('lodash');
 const {ObjectID} = require('mongodb');
 
 var {mongoose} = require('./db/mongoose');
@@ -37,7 +38,7 @@ app.get('/todos', (req, res) => {
 
 //Fetch todo by Id
 app.get('/todos/:id', (req, res) => {
-    let id =  req.params.id;
+    let id = req.params.id;
 
     if (!ObjectID.isValid(id)) {
         return res.status(404).send();
@@ -71,8 +72,18 @@ app.delete('/todos/:id', (req, res) => {
     });
 });
 
-app.listen(port, ()=> {
-   console.log(`Started on port ${port}`);
+// Patch a todo
+app.patch('/todos/:id', (req, res) => {
+    let id = req.id.params;
+    let body = _.pick(req.body, ['text', 'completed']);
+
+    if (!ObjectID.isValid(id)) {
+        return res.status(404).send();
+    }
+});
+
+app.listen(port, () => {
+    console.log(`Started on port ${port}`);
 });
 
 module.exports = {app};

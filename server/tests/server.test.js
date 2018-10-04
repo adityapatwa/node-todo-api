@@ -14,35 +14,35 @@ const todos = [{
 }];
 
 beforeEach((done) => {
-   Todo.deleteMany({}).then(() => {
-       return Todo.insertMany(todos);
-   }).then(() => done());
+    Todo.deleteMany({}).then(() => {
+        return Todo.insertMany(todos);
+    }).then(() => done());
 });
 
 describe('POST /todos', () => {
-   it('should create a new todo', (done) => {
-      let text = 'Text todo text';
+    it('should create a new todo', (done) => {
+        let text = 'Text todo text';
 
-      request(app)
-          .post('/todos')
-          .send({text})
-          .expect(200)
-          .expect((res) => {
-              expect(res.body.text).toBe(text);
-          })
-          .end((err) => {
-              if (err) {
-                  return done(err);
-              }
-              Todo.find({text}).then((todos) => {
-                  expect(todos.length).toBe(1);
-                  expect(todos[0].text).toBe(text);
-                  done();
-              }).catch((e) => done(e));
-          });
-   });
+        request(app)
+            .post('/todos')
+            .send({text})
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.text).toBe(text);
+            })
+            .end((err) => {
+                if (err) {
+                    return done(err);
+                }
+                Todo.find({text}).then((todos) => {
+                    expect(todos.length).toBe(1);
+                    expect(todos[0].text).toBe(text);
+                    done();
+                }).catch((e) => done(e));
+            });
+    });
 
-   it('should not create a new todo with invalid data', (done) => {
+    it('should not create a new todo with invalid data', (done) => {
         request(app)
             .post('/todos')
             .send({})
@@ -61,13 +61,13 @@ describe('POST /todos', () => {
 
 describe('GET /todos', () => {
     it('should get all todos', (done) => {
-       request(app)
-           .get('/todos')
-           .expect(200)
-           .expect((res) => {
+        request(app)
+            .get('/todos')
+            .expect(200)
+            .expect((res) => {
                 expect(res.body.todos.length).toBe(2);
-           })
-           .end(done);
+            })
+            .end(done);
     });
 });
 
@@ -102,7 +102,7 @@ describe('GET /todos/:id', () => {
 });
 
 describe('DELETE /todos/:id', () => {
-   it('should remove a todo', (done) => {
+    it('should remove a todo', (done) => {
         //Converting to Hex String is required to provide a valid Id to the findById() method
         let id = todos[1]._id.toHexString();
         request(app)
@@ -113,7 +113,7 @@ describe('DELETE /todos/:id', () => {
             })
             .end((err) => {
                 if (err) {
-                   return done(err);
+                    return done(err);
                 }
 
                 Todo.findById(id).then((todo) => {
@@ -121,7 +121,7 @@ describe('DELETE /todos/:id', () => {
                     done();
                 }).catch((e) => done(e));
             });
-   });
+    });
 
     it('should return 404 if todo is not found', (done) => {
         let id = new ObjectID();
